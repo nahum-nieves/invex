@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: invex
+      author: arturo_nieves
       changes:
         - createTable:
             tableName: Empleado
@@ -33,9 +33,18 @@ databaseChangeLog:
               - column:
                   name: fechaNacimiento
                   type: DATE
+              - column:
+                  name: puesto
+                  type: VARCHAR(60)
+              - column:
+                  name: fechaAlta
+                  type: DATE
+              - column:
+                  name: ativo
+                  type: bool
   - changeSet:
       id: 2
-      author: invex
+      author: arturo_nieves
       changes:
         - createTable:
             tableName: Usuario
@@ -57,3 +66,17 @@ databaseChangeLog:
                   type: VARCHAR(60)
                   constraints:
                     nullable: false
+
+  - changeSet:
+        id: 3
+        author: arturo_nieves
+        changes:
+          - insert:
+                tableName: Usuario
+                columns:
+                    - column:
+                        name: email
+                        value: anahumnieves@gmail.com
+                    - column:
+                        name: password
+                        value: $2a$10$KMgll7i73sajHecI/2yNGeiLE8tx1bMMUKqxpjlsSPE8iXSCFLKDK

@@ -1,6 +1,6 @@
 package com.invex.examen.controller;
 
-import com.invex.examen.entities.Usuario;
+import com.invex.examen.dto.UsuarioDto;
 import com.invex.examen.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ public class LoginController {
     private final UsuarioService usuarioService;
 
     @PostMapping("/login")
-    public String login(@RequestBody Usuario usuario) {
-        return usuarioService.login(usuario);
+    public String login(@RequestBody UsuarioDto usuarioDto) {
+        return usuarioService.login(usuarioDto);
     }
 }

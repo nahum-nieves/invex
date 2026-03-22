@@ -24,4 +24,7 @@ public class Empleado {
     private Integer edad;
     private String sexo;
     private LocalDate fechaNacimiento;
+    private String puesto;
+    private LocalDate fechaAlta;
+    private Boolean activo;
 }
