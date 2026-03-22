@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.4'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id "org.openapi.generator" version "7.3.0"
 }
 
 group = 'com.invex'
@@ -24,6 +25,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'com.h2database:h2'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+	implementation("org.openapitools:jackson-databind-nullable:0.2.9")
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	compileOnly 'org.projectlombok:lombok:1.18.44'
 	annotationProcessor 'org.projectlombok:lombok:1.18.44'
 	testCompileOnly 'org.projectlombok:lombok:1.18.44'
@@ -39,3 +43,20 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+openApiGenerate {
+	generatorName.set("spring")
+	inputSpec.set("$projectDir/src/main/resources/openapi/openapi.yaml")
+	outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath)
+
+	apiPackage.set("com.invex.examen.controller")
+	modelPackage.set("com.invex.examen.dto")
+
+	configOptions.set([
+		interfaceOnly: "true",
+		useJakartaEe: "true",
+		useSpringBoot3Nullable: "false"
+	])
+}
+// Ensure OpenAPI code is generated before compiling Java
+compileJava.dependsOn tasks.named('openApiGenerate')
+sourceSets.main.java.srcDir layout.buildDirectory.dir("generated/openapi/src/main/java")

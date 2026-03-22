@@ -1,7 +1,7 @@
 package com.invex.examen.service;
 
 import com.invex.examen.config.utility.JwtUtil;
-import com.invex.examen.dto.UsuarioDto;
+import com.invex.examen.dto.LoginRequest;
 import com.invex.examen.entities.Usuario;
 import com.invex.examen.repository.UsuarioRepository;
 import lombok.NonNull;
@@ -43,8 +43,8 @@ public class UsuarioService implements UserDetailsService {
         );
     }
 
-    public String login(UsuarioDto usuarioDto) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(usuarioDto.email(), usuarioDto.password()));
-        return jwtUtil.generateToken(usuarioDto.email());
+    public String login(LoginRequest usuarioDto) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(usuarioDto.getEmail(), usuarioDto.getPassword()));
+        return jwtUtil.generateToken(usuarioDto.getEmail());
     }
 }

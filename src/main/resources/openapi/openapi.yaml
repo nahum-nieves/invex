@@ -1,0 +1,131 @@
+openapi: 3.0.1
+info:
+  title: Empleado API
+  description: API para gestión de empleados
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /employees:
+    get:
+      summary: Devuelve el listado de todos los empleados registrados
+      responses:
+        '200':
+          description: Listado de empleados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmpleadoDto'
+    post:
+      summary: Permite insertar uno o varios empleados en una misma petición
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/EmpleadoDto'
+      responses:
+        '201':
+          description: Empleados creados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmpleadoDto'
+  /employees/{id}:
+    get:
+      summary: Recupera el detalle de un empleado por su ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Empleado encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoDto'
+        '404':
+          description: Empleado no encontrado
+    put:
+      summary: Actualiza todos o algunos de los campos de un empleado
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoDto'
+      responses:
+        '200':
+          description: Empleado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoDto'
+        '404':
+          description: Empleado no encontrado
+    delete:
+      summary: Elimina un empleado por su ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Empleado eliminado
+        '404':
+          description: Empleado no encontrado
+  /employees/search:
+    get:
+      summary: Buscar empleados por nombre (búsqueda parcial)
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Listado de empleados encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmpleadoDto'
+  /login:
+    post:
+      summary: Login de usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './dto/Login.yaml#/LoginRequest'
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                $ref: './dto/Login.yaml#/LoginResponse'
+components:
+  schemas:
+    EmpleadoDto:
+      $ref: './dto/EmpleadoDto.yaml#/EmpleadoDto'

@@ -1,0 +1,28 @@
+EmpleadoDto:
+  type: object
+  properties:
+    id:
+      type: integer
+    primerNombre:
+      type: string
+    segundoNombre:
+      type: string
+    apellidoPaterno:
+      type: string
+    apellidoMaterno:
+      type: string
+    edad:
+      type: integer
+    sexo:
+      type: string
+    fechaNacimiento:
+      type: string
+      format: date
+    puesto:
+      type: string
+    fechaAlta:
+      type: string
+      format: date
+    activo:
+      type: boolean
+

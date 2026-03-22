@@ -12,3 +12,9 @@ spring:
 jwt:
   private-key-path: keys/private_key.pem
   public-key-path: keys/public_key.pem
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
