@@ -16,6 +16,6 @@ public class LoginController implements LoginApi {
     private final UsuarioService usuarioService;
 
     public ResponseEntity<LoginResponse> loginPost(@RequestBody LoginRequest usuarioDto) {
-        return ResponseEntity.accepted(new LoginResponse().token( usuarioService.login(usuarioDto)));
+        return ResponseEntity.ok(new LoginResponse().token(usuarioService.login(usuarioDto)));
     }
 }
