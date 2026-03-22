@@ -29,9 +29,11 @@ public class EmpleadoService {
         });
     }
 
+
     @Transactional
     public List<EmpleadoDto> saveAll(List<EmpleadoDto> empleados) {
-        return empleados.stream().map(dto -> {
+        return empleados.stream()
+            .map(dto -> {
             Empleado empleado = new Empleado();
             BeanUtils.copyProperties(dto, empleado);
             return empleadoRepository.save(empleado);
