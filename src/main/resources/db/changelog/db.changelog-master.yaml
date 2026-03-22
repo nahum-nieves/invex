@@ -33,3 +33,27 @@ databaseChangeLog:
               - column:
                   name: fechaNacimiento
                   type: DATE
+  - changeSet:
+      id: 2
+      author: invex
+      changes:
+        - createTable:
+            tableName: Usuario
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(60)
+                  constraints:
+                    nullable: false
