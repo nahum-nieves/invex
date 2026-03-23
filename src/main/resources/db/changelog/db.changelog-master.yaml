@@ -80,3 +80,12 @@ databaseChangeLog:
                     - column:
                         name: password
                         value: $2a$10$KMgll7i73sajHecI/2yNGeiLE8tx1bMMUKqxpjlsSPE8iXSCFLKDK
+  - changeSet:
+      id: 4
+      author: arturo_nieves
+      changes:
+        - renameColumn:
+            tableName: Empleado
+            oldColumnName: ativo
+            newColumnName: activo
+            columnDataType: bool
