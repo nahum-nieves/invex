@@ -5,9 +5,9 @@ import com.invex.examen.entities.Empleado;
 import com.invex.examen.exception.ValidationException;
 import com.invex.examen.repository.EmpleadoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmpleadoService {
     private final EmpleadoRepository empleadoRepository;
 
@@ -28,7 +29,11 @@ public class EmpleadoService {
     }
 
     public Optional<EmpleadoDto> findById(Integer id) {
+        log.info("Buscando empleado por id: {}", id);
         Optional<Empleado> empleado = empleadoRepository.findById(id);
+        if (empleado.isEmpty()) {
+            log.warn("Empleado no encontrado con id: {}", id);
+        }
         return empleado.map(e -> {
             EmpleadoDto dto = new EmpleadoDto();
             BeanUtils.copyProperties(e, dto);
@@ -39,20 +44,23 @@ public class EmpleadoService {
 
     @Transactional
     public List<EmpleadoDto> saveAll(List<EmpleadoDto> empleados) {
+        log.info("Guardando lista de empleados. Total: {}", empleados.size());
         return empleados.stream()
             .map(dto -> {
-            Empleado empleado = new Empleado();
-            BeanUtils.copyProperties(dto, empleado);
-            return empleadoRepository.save(empleado);
-        }).map(saved -> {
-            EmpleadoDto dto = new EmpleadoDto();
-            BeanUtils.copyProperties(saved, dto);
-            return dto;
-        }).toList();
+                log.debug("Guardando empleado: {}", dto);
+                Empleado empleado = new Empleado();
+                BeanUtils.copyProperties(dto, empleado,"id");
+                return empleadoRepository.save(empleado);
+            }).map(saved -> {
+                EmpleadoDto dto = new EmpleadoDto();
+                BeanUtils.copyProperties(saved, dto);
+                return dto;
+            }).toList();
     }
 
     @Transactional
     public EmpleadoDto update(Integer id, EmpleadoDto empleadoDto) {
+        log.info("Actualizando empleado con id: {}", id);
         validarEmpleado(empleadoDto);
         return empleadoRepository.findById(id)
                 .map(existing -> {
@@ -63,15 +71,20 @@ public class EmpleadoService {
                     BeanUtils.copyProperties(empleado, dto);
                     return dto;
                 })
-                .orElseThrow(() -> new ValidationException("Empleado no encontrado con id: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Empleado no encontrado para actualizar con id: {}", id);
+                    return new ValidationException("Empleado no encontrado con id: " + id);
+                });
     }
 
     @Transactional
     public void deleteById(Integer id) {
+        log.info("Eliminando empleado con id: {}", id);
         empleadoRepository.deleteById(id);
     }
 
     public List<EmpleadoDto> searchByName(String name) {
+        log.info("Buscando empleados por nombre: {}", name);
         return empleadoRepository.searchByName(name).stream().map(empleado -> {
             EmpleadoDto dto = new EmpleadoDto();
             BeanUtils.copyProperties(empleado, dto);
