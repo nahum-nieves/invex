@@ -2,8 +2,10 @@ package com.invex.examen.service;
 
 import com.invex.examen.dto.EmpleadoDto;
 import com.invex.examen.entities.Empleado;
+import com.invex.examen.exception.ValidationException;
 import com.invex.examen.repository.EmpleadoRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,7 @@ public class EmpleadoService {
 
     @Transactional
     public EmpleadoDto update(Integer id, EmpleadoDto empleadoDto) {
+        validarEmpleado(empleadoDto);
         return empleadoRepository.findById(id)
                 .map(existing -> {
                     BeanUtils.copyProperties(empleadoDto, existing, "id");
@@ -69,5 +72,14 @@ public class EmpleadoService {
             BeanUtils.copyProperties(empleado, dto);
             return dto;
         }).toList();
+    }
+
+    private void validarEmpleado(EmpleadoDto empleadoDto) {
+        if (StringUtils.isBlank(empleadoDto.getPrimerNombre()) || empleadoDto.getPrimerNombre().length() < 2) {
+            throw new ValidationException("El primer nombre es obligatorio y debe tener al menos 2 caracteres");
+        }
+        if (StringUtils.isBlank(empleadoDto.getApellidoPaterno()) || empleadoDto.getApellidoPaterno().length() < 2) {
+            throw new ValidationException("El apellido paterno es obligatorio y debe tener al menos 2 caracteres");
+        }
     }
 }
