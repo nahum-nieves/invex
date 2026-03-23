@@ -3,6 +3,7 @@ package com.invex.examen.controller;
 import com.invex.examen.dto.EmpleadoDto;
 import com.invex.examen.service.EmpleadoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,12 +16,7 @@ public class EmpleadoController implements EmployeesApi {
 
     @Override
     public ResponseEntity<List<EmpleadoDto>> employeesGet() {
-        List<EmpleadoDto> empleados = empleadoService.findAll().stream().map(e -> {
-            EmpleadoDto dto = new EmpleadoDto();
-            org.springframework.beans.BeanUtils.copyProperties(e, dto);
-            return dto;
-        }).toList();
-        return ResponseEntity.ok(empleados);
+        return ResponseEntity.ok(empleadoService.findAll());
     }
 
     @Override
@@ -33,17 +29,13 @@ public class EmpleadoController implements EmployeesApi {
     @Override
     public ResponseEntity<List<EmpleadoDto>> employeesPost(List<EmpleadoDto> empleadoDto) {
         List<EmpleadoDto> saved = empleadoService.saveAll(empleadoDto);
-        return ResponseEntity.status(201).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @Override
     public ResponseEntity<EmpleadoDto> employeesIdPut(Integer id, EmpleadoDto empleadoDto) {
-        try {
-            EmpleadoDto updated = empleadoService.update(id, empleadoDto);
-            return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        EmpleadoDto updated = empleadoService.update(id, empleadoDto);
+        return ResponseEntity.ok(updated);
     }
 
     @Override
@@ -54,7 +46,6 @@ public class EmpleadoController implements EmployeesApi {
 
     @Override
     public ResponseEntity<List<EmpleadoDto>> employeesSearchGet(String name) {
-        List<EmpleadoDto> result = empleadoService.searchByName(name);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(empleadoService.searchByName(name));
     }
 }
