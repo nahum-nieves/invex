@@ -2,9 +2,11 @@ package com.invex.examen.service;
 
 import com.invex.examen.dto.EmpleadoDto;
 import com.invex.examen.entities.Empleado;
+import com.invex.examen.exception.ValidationException;
 import com.invex.examen.repository.EmpleadoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +20,12 @@ import java.util.Optional;
 public class EmpleadoService {
     private final EmpleadoRepository empleadoRepository;
 
-    public List<Empleado> findAll() {
-        log.info("Buscando todos los empleados");
-        return empleadoRepository.findAll();
+    public List<EmpleadoDto> findAll() {
+        return empleadoRepository.findAll().stream().map(e -> {
+            EmpleadoDto dto = new EmpleadoDto();
+            org.springframework.beans.BeanUtils.copyProperties(e, dto);
+            return dto;
+        }).toList();
     }
 
     public Optional<EmpleadoDto> findById(Integer id) {
@@ -44,7 +49,7 @@ public class EmpleadoService {
             .map(dto -> {
                 log.debug("Guardando empleado: {}", dto);
                 Empleado empleado = new Empleado();
-                BeanUtils.copyProperties(dto, empleado);
+                BeanUtils.copyProperties(dto, empleado,"id");
                 return empleadoRepository.save(empleado);
             }).map(saved -> {
                 EmpleadoDto dto = new EmpleadoDto();
@@ -56,6 +61,7 @@ public class EmpleadoService {
     @Transactional
     public EmpleadoDto update(Integer id, EmpleadoDto empleadoDto) {
         log.info("Actualizando empleado con id: {}", id);
+        validarEmpleado(empleadoDto);
         return empleadoRepository.findById(id)
                 .map(existing -> {
                     BeanUtils.copyProperties(empleadoDto, existing, "id");
@@ -67,7 +73,7 @@ public class EmpleadoService {
                 })
                 .orElseThrow(() -> {
                     log.warn("Empleado no encontrado para actualizar con id: {}", id);
-                    return new RuntimeException("Empleado not found");
+                    return new ValidationException("Empleado no encontrado con id: " + id);
                 });
     }
 
@@ -84,5 +90,14 @@ public class EmpleadoService {
             BeanUtils.copyProperties(empleado, dto);
             return dto;
         }).toList();
+    }
+
+    private void validarEmpleado(EmpleadoDto empleadoDto) {
+        if (StringUtils.isBlank(empleadoDto.getPrimerNombre()) || empleadoDto.getPrimerNombre().length() < 2) {
+            throw new ValidationException("El primer nombre es obligatorio y debe tener al menos 2 caracteres");
+        }
+        if (StringUtils.isBlank(empleadoDto.getApellidoPaterno()) || empleadoDto.getApellidoPaterno().length() < 2) {
+            throw new ValidationException("El apellido paterno es obligatorio y debe tener al menos 2 caracteres");
+        }
     }
 }
