@@ -1,4 +1,8 @@
 spring:
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   application:
     name: examen
   datasource:
@@ -26,6 +30,6 @@ logging:
     com.invex.examen: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
-  file:
-    name: logs/app-prod.log
+#  file:
+#    name: logs/app-prod.log
 
