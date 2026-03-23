@@ -40,7 +40,9 @@ public class SecurityConfiguration {
                     "/swagger-ui/**",
                     "/v3/api-docs",
                     "/v3/api-docs.yaml",
-                    "/v3/api-docs/**"
+                    "/v3/api-docs/**",
+                    "/actuator",
+                    "/actuator/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
