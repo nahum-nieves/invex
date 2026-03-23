@@ -7,6 +7,7 @@ import com.invex.examen.repository.EmpleadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +19,12 @@ import java.util.Optional;
 public class EmpleadoService {
     private final EmpleadoRepository empleadoRepository;
 
-    public List<Empleado> findAll() {
-        return empleadoRepository.findAll();
+    public List<EmpleadoDto> findAll() {
+        return empleadoRepository.findAll().stream().map(e -> {
+            EmpleadoDto dto = new EmpleadoDto();
+            org.springframework.beans.BeanUtils.copyProperties(e, dto);
+            return dto;
+        }).toList();
     }
 
     public Optional<EmpleadoDto> findById(Integer id) {
@@ -58,7 +63,7 @@ public class EmpleadoService {
                     BeanUtils.copyProperties(empleado, dto);
                     return dto;
                 })
-                .orElseThrow(() -> new RuntimeException("Empleado not found"));
+                .orElseThrow(() -> new ValidationException("Empleado no encontrado con id: " + id));
     }
 
     @Transactional
